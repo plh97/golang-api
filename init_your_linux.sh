@@ -15,4 +15,5 @@ tar -xf ./go1.13.3.linux-amd64.tar.gz &&
 mv ./go /usr/local/ &&
 cp ./id_rsa_github* /etc/ssh/ &&
 vim /etc/ssh/sshd_config &&
-service sshd restart
+service sshd restart &&
+git config --global credential.helper store

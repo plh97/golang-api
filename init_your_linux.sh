@@ -2,6 +2,7 @@ apt update -y &&
 apt upgrade -y &&
 apt autoremove -y &&
 apt install zsh -y &&
+apt install gitless -y &&
 touch ~/.gitconfig &&
 echo '[user]' >> ~/.gitconfig &&
 echo '	name = pengliheng' >> ~/.gitconfig &&

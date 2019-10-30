@@ -12,4 +12,7 @@ tar -xf ./node-v12.13.0-linux-x64.tar.xz &&
 mv ./node-v12.13.0-linux-x64 /usr/local/ &&
 wget https://dl.google.com/go/go1.13.3.linux-amd64.tar.gz &&
 tar -xf ./go1.13.3.linux-amd64.tar.gz &&
-mv ./go /usr/local/
+mv ./go /usr/local/ &&
+cp ./id_rsa_github* /etc/ssh/ &&
+vim /etc/ssh/sshd_config &&
+service sshd restart

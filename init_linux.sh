@@ -14,6 +14,5 @@ mv ./go /usr/local/ &&
 rm ./node-v12.13.0-linux-x64.tar.xz &&
 rm ./go1.13.3.linux-amd64.tar.gz &&
 cp ./id_rsa_github* /etc/ssh/ &&
-vim /etc/ssh/sshd_config &&
-service sshd restart &&
-git config --global credential.helper store
+git config --global credential.helper store &&
+vim /etc/ssh/sshd_config

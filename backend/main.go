@@ -37,7 +37,7 @@ func main() {
 	r.HandleFunc("/api/book/{id}", getBook).Methods("GET")
 	srv := &http.Server{
 		Handler: r,
-		Addr:    "127.0.0.1:80",
+		Addr:    "127.0.0.1:8080",
 	}
 
 	log.Fatal(srv.ListenAndServe())

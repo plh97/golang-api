@@ -1,9 +1,36 @@
 version: '3.7'
 
 services:
-  chat:
-    image: golang-api
-    ports:
-      - 8000:80
+  frontend:
+    restart: always
+    command: "npm run dev"
+    build:
+      context: './frontend'
     volumes:
-      - ./:/root/app
+      - ./frontend/:/root/frontend
+    networks:
+      - gate-tier
+  backend:
+    command: "go run main.go"
+    restart: always
+    build:
+      context: './backend'
+    volumes:
+      - ./backend/:/go/src/github.com/pengliheng/golang-api/backend
+    networks:
+      - gate-tier
+  nginx:
+    restart: always
+    build:
+      context: './nginx'
+    networks:
+      - gate-tier
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx:/var/log/nginx/
+    ports:
+      - "80:80"
+      - "5000:5000"
+
+networks:
+  gate-tier:

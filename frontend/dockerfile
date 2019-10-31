@@ -1,0 +1,11 @@
+FROM node
+
+COPY . /root/frontend
+
+WORKDIR /root/frontend
+
+RUN npm config set user 0
+
+RUN npm config set unsafe-perm true
+
+RUN npm install -g parcel-bundler

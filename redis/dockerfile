@@ -1,0 +1,7 @@
+FROM golang
+
+COPY ./conf.d /etc/nginx/conf.d
+
+RUN go get github.com/gorilla/mux
+
+CMD [ "go run main.go" ]

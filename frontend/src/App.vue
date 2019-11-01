@@ -1,24 +1,34 @@
 <template lang="pug">
   .container 
-    .top
+    .header
       el-button New Book
-    el-table(:data="tableData")
+    el-table(:data="tableData" style="width: 100%")
+      el-table-column(prop="id" label="id")
+      el-table-column(prop="name" label="name")
+      el-table-column(prop="author" label="author")
+      el-table-column(prop="createTime" label="createTime")
+      el-table-column(prop="updateTime" label="updateTime")
+
     
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
+import {AxiosResponse} from 'axios'
 type Book = {
-  name: string
-  age: number
+	id:     		  string
+	name:  			  string
+	author: 			string
+	createTime: 	number
+	updateTime: 	number
 }
 @Component({})
 export default class MyComponent extends Vue {
   public tableData: Book[] = [];
   created() {
-    this.$http("http://35.247.143.160:8080").then(res=>{
-
+    this.$http("http://35.247.143.160:8002/api/book").then((res:AxiosResponse<Book[]>) => {
+      this.tableData = res.data
     })
   }
 }
@@ -28,8 +38,12 @@ export default class MyComponent extends Vue {
 .container {
   color: red;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   height: 100%;
+  .header {
+    display: flex;
+    justify-content: flex-end;
+  }
   .row {
     flex: 1;
   }

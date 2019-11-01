@@ -1,3 +1,9 @@
 {
-  "git.ignoreLimitWarning": true
+  "git.ignoreLimitWarning": true,
+  "go.inferGopath": true,
+  "go.buildOnSave": "workspace",
+  "go.docsTool": "gogetdoc",
+  "go.lintTool": "golint",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true
 }

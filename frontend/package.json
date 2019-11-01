@@ -4,7 +4,7 @@
   "description": "`docker-compose up`",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel --hmr-port 1235 ./src/index.html",
+    "dev": "parcel --hmr-port 8003 ./src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

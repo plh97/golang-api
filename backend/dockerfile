@@ -6,6 +6,13 @@ COPY . /go/src/github.com/pengliheng/golang/backend
 
 WORKDIR /go/src/github.com/pengliheng/golang/backend
 
-RUN go get github.com/gorilla/mux
+RUN go get
 
-CMD [ "go run main.go" ]
+RUN curl -fLo ~/.air https://raw.githubusercontent.com/cosmtrek/air/master/bin/linux/air
+
+RUN chmod +x ~/.air
+RUN cp ~/.air /usr/bin/air
+
+# RUN go get github.com/gorilla/mux
+
+# CMD [ "go run main.go" ]

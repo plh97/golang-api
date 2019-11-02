@@ -27,7 +27,6 @@ func main() {
 	todos = append(todos, Todo{id: "1", name: "peng"})
 	todos = append(todos, Todo{id: "2", name: "zhang"})
 	todos = append(todos, Todo{id: "3", name: "dai"})
-	todos = append(todos, Todo{id: "4", name: "lin"})
 	router.HandleFunc("/api/book", getBooks).Methods("GET")
 	router.HandleFunc("/api/book/create", createBook).Methods("GET")
 	router.HandleFunc("/api/book/update/{id}", updateBook).Methods("GET")
@@ -44,7 +43,6 @@ func main() {
 // 获取所有书
 func getBooks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Println(todos)
 	json.NewEncoder(w).Encode(todos)
 }
 func getBook(w http.ResponseWriter, r *http.Request) {

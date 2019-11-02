@@ -6,8 +6,8 @@
       el-table-column(prop="id" label="id")
       el-table-column(prop="name" label="name")
       el-table-column(prop="author" label="author")
-      el-table-column(prop="createTime" label="createTime")
-      el-table-column(prop="updateTime" label="updateTime")
+      el-table-column(prop="createTime" label="createAt")
+      el-table-column(prop="updateTime" label="updateAt")
 
     
 </template>

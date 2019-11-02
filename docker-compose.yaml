@@ -2,7 +2,8 @@ version: '3.7'
 
 services:
   backend:
-    command: "air"
+    command: 
+      - "air"
     # command: "go run main.go"
     restart: always
     build:

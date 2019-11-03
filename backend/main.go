@@ -16,18 +16,18 @@ type Book struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
 	Author    string    `json:"author"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreateAt time.Time `json:"createAt"`
+	UpdateAt time.Time `json:"updateAt"`
 }
 
 var books []Book
 
 func main() {
 	r := mux.NewRouter()
-	books = append(books, Book{ID: "1", Author: "peng", CreatedAt: time.Now(), UpdatedAt: time.Now(), Name: "哈里波塔"})
-	books = append(books, Book{ID: "2", Author: "peng", CreatedAt: time.Now(), UpdatedAt: time.Now(), Name: "死侍"})
-	books = append(books, Book{ID: "3", Author: "peng", CreatedAt: time.Now(), UpdatedAt: time.Now(), Name: "超市夜未眠"})
-	books = append(books, Book{ID: "4", Author: "peng", CreatedAt: time.Now(), UpdatedAt: time.Now(), Name: "吉泽明步"})
+	books = append(books, Book{ID: "1", Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "哈里波塔"})
+	books = append(books, Book{ID: "2", Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "死侍"})
+	books = append(books, Book{ID: "3", Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "超市夜未眠"})
+	books = append(books, Book{ID: "4", Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "吉泽明步"})
 	r.HandleFunc("/api/book", getBooks).Methods("GET")
 	r.HandleFunc("/api/book/create", createBook).Methods("GET")
 	r.HandleFunc("/api/book/update/{id}", updateBook).Methods("GET")

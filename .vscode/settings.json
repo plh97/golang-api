@@ -5,5 +5,7 @@
   "go.docsTool": "gogetdoc",
   "go.lintTool": "golint",
   "editor.formatOnPaste": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "tslint.configFile": "./frontend/tslint.json",
+  "tslint.enable": true
 }

@@ -27,7 +27,6 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -36,6 +35,7 @@ func corsMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
+			return
 		}
 		next.ServeHTTP(w, r)
 	})
@@ -61,11 +61,9 @@ func main() {
 
 // 获取所有书
 func getBooks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(books)
 }
 func getBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r) // get params
 	for _, e := range books {
 		if e.ID == params["id"] {
@@ -81,9 +79,7 @@ func createBook(w http.ResponseWriter, r *http.Request) {
 	var book Book
 	json.NewDecoder(r.Body).Decode(&book)
 	book.ID = strconv.Itoa(rand.Intn(1000000))
-	log.Println(len(books), book)
 	books = append(books, book)
-	log.Println(len(books), book)
 	json.NewEncoder(w).Encode(books)
 }
 

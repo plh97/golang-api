@@ -17,7 +17,7 @@
     .header
       el-button(type="primary" size="mini" @click="centerDialogVisible=true") Add Book
     el-table(:data="tableData" style="width: 100%" v-loading="loading.global")
-      el-table-column(prop="id" label="ID" width="50")
+      el-table-column(prop="id" label="ID" width="70")
       el-table-column(prop="name" label="Name")
         template(slot-scope="scope")
           el-input(v-if="currentEditLineId === scope.row.id" v-model="scope.row.name" size="mini")

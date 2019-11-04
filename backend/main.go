@@ -22,6 +22,14 @@ type Book struct {
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println(r.RequestURI)
+		next.ServeHTTP(w, r)
+	})
+}
+
+
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, PATCH, DELETE")
@@ -29,9 +37,6 @@ func loggingMiddleware(next http.Handler) http.Handler {
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 		}
-		// Do stuff here
-		log.Println(r.RequestURI)
-		// Call the next handler, which can be another middleware in the chain, or the final handler.
 		next.ServeHTTP(w, r)
 	})
 }
@@ -40,30 +45,18 @@ var books []Book
 
 func main() {
 	r := mux.NewRouter()
-
-	// r.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
-	// 	w.WriteHeader(http.StatusNoContent)
-	// 	return
-	// })
-	books = append(books, Book{ID: "1", Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "哈里波塔"})
-	books = append(books, Book{ID: "2", Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "死侍"})
-	books = append(books, Book{ID: "3", Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "超市夜未眠"})
-	books = append(books, Book{ID: "4", Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "吉泽明步"})
-	// r.Use(mux.CORSMethodMiddleware(r))
-	r.HandleFunc("/api/book", getBooks).Methods(http.MethodGet)
-	r.HandleFunc("/api/book/", createBook).Methods(http.MethodPost, http.MethodOptions)
+	books = append(books, Book{ID: strconv.Itoa(rand.Intn(1000000)), Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "哈里波塔"})
+	books = append(books, Book{ID: strconv.Itoa(rand.Intn(1000000)), Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "死侍"})
+	books = append(books, Book{ID: strconv.Itoa(rand.Intn(1000000)), Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "超市夜未眠"})
+	books = append(books, Book{ID: strconv.Itoa(rand.Intn(1000000)), Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "吉泽明步"})
 	r.HandleFunc("/api/book/{id}", updateBook).Methods(http.MethodPatch, http.MethodOptions)
 	r.HandleFunc("/api/book/{id}", deleteBook).Methods(http.MethodDelete, http.MethodOptions)
+	r.HandleFunc("/api/book", createBook).Methods(http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/api/book", getBooks).Methods(http.MethodGet)
 	r.HandleFunc("/api/book/{id}", getBook).Methods(http.MethodGet)
+	r.Use(corsMiddleware)
 	r.Use(loggingMiddleware)
-	r.Use(mux.CORSMethodMiddleware(r))
-	http.ListenAndServe(":8080", r)
-	// srv := &http.Server{
-	// 	Handler: r,
-	// 	Addr:    "0.0.0.0:8080",
-	// }
-	// log.Fatal(srv.ListenAndServe())
+	http.ListenAndServe("0.0.0.0:8080", r)
 }
 
 // 获取所有书
@@ -87,8 +80,10 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 func createBook(w http.ResponseWriter, r *http.Request) {
 	var book Book
 	json.NewDecoder(r.Body).Decode(&book)
-	book.ID = strconv.Itoa(rand.Intn(10000))
+	book.ID = strconv.Itoa(rand.Intn(1000000))
+	log.Println(len(books), book)
 	books = append(books, book)
+	log.Println(len(books), book)
 	json.NewEncoder(w).Encode(books)
 }
 

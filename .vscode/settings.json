@@ -1,14 +1,13 @@
 {
-  "git.ignoreLimitWarning": true,
   "go.inferGopath": true,
-  "go.buildOnSave": "workspace",
+  // "go.buildOnSave": "workspace",
   "go.docsTool": "gogetdoc",
   "go.lintTool": "golint",
+  "go.goroot": "/usr/local/go",
+  "go.gopath": "/root/go",
+  "git.ignoreLimitWarning": true,
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
-  "tslint.configFile": "./frontend/tslint.json",
-  "tslint.enable": true,
-  "files.autoSave": "onFocusChange",
-  "go.goroot": "/usr/local/go",
-  "go.gopath": "/root/go"
+  "tslint.configFile": "./frontend/tslint.json"
+  // "files.autoSave": "onFocusChange"
 }

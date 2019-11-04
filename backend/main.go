@@ -24,11 +24,11 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, PATCH, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 		}
-		// 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
 		// Do stuff here
 		log.Println(r.RequestURI)
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
@@ -40,7 +40,7 @@ var books []Book
 
 func main() {
 	r := mux.NewRouter()
-	r.Use(loggingMiddleware)
+
 	// r.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	// 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
 	// 	w.WriteHeader(http.StatusNoContent)
@@ -51,16 +51,19 @@ func main() {
 	books = append(books, Book{ID: "3", Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "超市夜未眠"})
 	books = append(books, Book{ID: "4", Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "吉泽明步"})
 	// r.Use(mux.CORSMethodMiddleware(r))
-	r.HandleFunc("/api/book", getBooks).Methods("GET")
-	r.HandleFunc("/api/book/", createBook).Methods("POST")
-	r.HandleFunc("/api/book/{id}", updateBook).Methods("PATCH")
-	r.HandleFunc("/api/book/{id}", deleteBook).Methods("DELETE")
-	r.HandleFunc("/api/book/{id}", getBook).Methods("GET")
-	srv := &http.Server{
-		Handler: r,
-		Addr:    "0.0.0.0:8080",
-	}
-	log.Fatal(srv.ListenAndServe())
+	r.HandleFunc("/api/book", getBooks).Methods(http.MethodGet)
+	r.HandleFunc("/api/book/", createBook).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/api/book/{id}", updateBook).Methods(http.MethodPatch, http.MethodOptions)
+	r.HandleFunc("/api/book/{id}", deleteBook).Methods(http.MethodDelete, http.MethodOptions)
+	r.HandleFunc("/api/book/{id}", getBook).Methods(http.MethodGet)
+	r.Use(loggingMiddleware)
+	r.Use(mux.CORSMethodMiddleware(r))
+	http.ListenAndServe(":8080", r)
+	// srv := &http.Server{
+	// 	Handler: r,
+	// 	Addr:    "0.0.0.0:8080",
+	// }
+	// log.Fatal(srv.ListenAndServe())
 }
 
 // 获取所有书
@@ -96,8 +99,9 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 		if book.ID == params["id"] {
 			var book Book
 			json.NewDecoder(r.Body).Decode(&book)
-			books[i] = book
-			// books = append(books[:i], book, books[i+1:]...)
+			books[i].Name = book.Name
+			books[i].Author = book.Author
+			books[i].UpdateAt = time.Now()
 			break
 		}
 	}

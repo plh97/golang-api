@@ -1,6 +1,17 @@
 version: "3.7"
 
 services:
+  mongodb:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - ./mongodb:/data/db
+    networks:
+      - back-tier
+
   backend:
     restart: always
     command:
@@ -11,6 +22,8 @@ services:
       - ./backend/:/go/src/github.com/pengliheng/golang-api/backend/
     networks:
       - gate-tier
+      - back-tier
+
   frontend:
     restart: always
     command: "npm run dev"
@@ -20,6 +33,7 @@ services:
       - ./frontend/:/root/frontend/
     networks:
       - gate-tier
+
   nginx:
     restart: always
     build:
@@ -36,3 +50,4 @@ services:
 
 networks:
   gate-tier:
+  back-tier:

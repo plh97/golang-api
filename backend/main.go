@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
+	// "go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"math/rand"
 	"net/http"
@@ -19,6 +23,15 @@ type Book struct {
 	CreateAt time.Time `json:"createAt"`
 	UpdateAt time.Time `json:"updateAt"`
 }
+
+// type Trainer struct {
+// 	Name string
+// 	Age  int
+// 	City string
+// }
+
+var books []Book
+var collection *mongo.Collection
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -41,14 +54,28 @@ func corsMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-var books []Book
+func handleMongodb() {
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	client, err := mongo.Connect(context.TODO(), clientOptions)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = client.Ping(context.TODO(), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Connected to MongoDB!")
+	collection = client.Database("test").Collection("trainers")
+}
 
-func main() {
+func handleRoute() {
+	// api
 	r := mux.NewRouter()
 	books = append(books, Book{ID: strconv.Itoa(rand.Intn(1000000)), Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "哈里波塔"})
 	books = append(books, Book{ID: strconv.Itoa(rand.Intn(1000000)), Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "死侍"})
 	books = append(books, Book{ID: strconv.Itoa(rand.Intn(1000000)), Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "超市夜未眠"})
 	books = append(books, Book{ID: strconv.Itoa(rand.Intn(1000000)), Author: "peng", CreateAt: time.Now(), UpdateAt: time.Now(), Name: "吉泽明步"})
+	collection.Insert(context.TODO(), books)
 	r.HandleFunc("/api/book/{id}", updateBook).Methods(http.MethodPatch, http.MethodOptions)
 	r.HandleFunc("/api/book/{id}", deleteBook).Methods(http.MethodDelete, http.MethodOptions)
 	r.HandleFunc("/api/book", createBook).Methods(http.MethodOptions, http.MethodPost)
@@ -57,6 +84,11 @@ func main() {
 	r.Use(corsMiddleware)
 	r.Use(loggingMiddleware)
 	http.ListenAndServe("0.0.0.0:8080", r)
+}
+
+func main() {
+	handleMongodb()
+	handleRoute()
 }
 
 // 获取所有书
@@ -76,6 +108,10 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 
 // 创建书
 func createBook(w http.ResponseWriter, r *http.Request) {
+	insertResult, err := collection.InsertOne(context.TODO(), ash)
+	if err != nil {
+		log.Fatal(err)
+	}
 	var book Book
 	json.NewDecoder(r.Body).Decode(&book)
 	book.ID = strconv.Itoa(rand.Intn(1000000))

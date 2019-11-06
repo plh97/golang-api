@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosApi = axios.create({
-  baseURL: "http://35.247.143.160:8002"
+  baseURL: `//${document.domain}:8002`
 });
 
 export function addBook(data: any) {

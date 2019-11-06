@@ -33,7 +33,7 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-
 sudo chmod +x /usr/local/bin/docker-compose &&
 sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose &&
 docker-compose --version &&
-rm containerd.io_1.2.6-3_amd64 &&
+rm containerd.io_1.2.6-3_amd64.deb &&
 rm docker-ce_19.03.3~3-0~ubuntu-disco_amd64.deb &&
 rm docker-ce-cli_19.03.3~3-0~ubuntu-disco_amd64.deb &&
 vim /etc/ssh/sshd_config

@@ -12,16 +12,16 @@ export function addBook(data: any) {
   }).then(res => res.data);
 }
 
-export function deleteBook(id: string) {
+export function deleteBook(_id: string) {
   return axiosApi({
-    url: "/api/book/" + id,
+    url: "/api/book/" + _id,
     method: "DELETE",
   }).then(res => res.data);
 }
 
 export function updateBook(data: any) {
   return axiosApi({
-    url: "/api/book/" + data.id,
+    url: "/api/book/" + data._id,
     method: "PATCH",
     data
   }).then(res => res.data);

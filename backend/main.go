@@ -18,17 +18,18 @@ import (
 
 // Book is a book title
 type Book struct {
-	ID primitive.ObjectID `bson:"_id, omitempty"`
-	Name     string    `json:"name"`
-	Author   string    `json:"author"`
-	CreateAt time.Time `json:"createAt"`
-	UpdateAt time.Time `json:"updateAt"`
+	ID       primitive.ObjectID `bson:"_id, omitempty"`
+	Name     string             `json:"name"`
+	Author   string             `json:"author"`
+	CreateAt time.Time          `json:"createAt"`
+	UpdateAt time.Time          `json:"updateAt"`
 }
 
 var books []Book
 var collection *mongo.Collection
 var ctx context.Context
 
+// ObjectID id
 type ObjectID [12]byte
 
 func loggingMiddleware(next http.Handler) http.Handler {
@@ -99,15 +100,15 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r) // get params
 	var book Book
 	json.NewDecoder(r.Body).Decode(&book)
-	objectId,err := primitive.ObjectIDFromHex(params["id"])
+	objectID, err := primitive.ObjectIDFromHex(params["id"])
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(2222222222, book.Author, book.Name,111111111)
+	fmt.Println(2222222222, book.Author, book.Name, 111111111)
 	result, err := collection.UpdateOne(
 		context.Background(),
 		bson.D{
-			{"_id", objectId},
+			{"_id", objectID},
 		},
 		bson.D{
 			{"$set", bson.D{
@@ -125,14 +126,14 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 
 func deleteBook(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r) // get params
-	objectId,err := primitive.ObjectIDFromHex(params["id"])
+	objectID, err := primitive.ObjectIDFromHex(params["id"])
 	if err != nil {
 		log.Fatal(err)
 	}
 	result, err := collection.DeleteOne(
 		context.Background(),
 		bson.D{
-			{"_id", objectId},
+			{"_id", objectID},
 		},
 	)
 	if err != nil {

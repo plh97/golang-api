@@ -9,10 +9,20 @@ export default new VueRouter({
   routes: [
     {
       path: "/",
+      redirect: "/home"
+    },
+    {
+      path: "/home",
       component: Layout,
       name: "home",
-      children: [{ 
-        path: "/", component: Home, name: "" }]
+      redirect: "/home/index",
+      children: [
+        {
+          path: "/home/index",
+          component: Home,
+          name: "Index"
+        }
+      ]
     }
   ]
 });

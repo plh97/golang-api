@@ -1,23 +1,28 @@
+import { ActionContext } from "vuex";
 const state = {
   status: false
 };
 
+type StateType = {
+  status: boolean;
+};
+
 const mutations = {
-  SET_STATUS: (state, status) => {
+  SET_STATUS: (state: StateType, status: boolean) => {
     state.status = status;
   }
 };
 
 const actions = {
   // get user info
-  start({ commit, state }) {
+  start(context: ActionContext<any, any>) {
     return new Promise(() => {
-      commit("SET_STATUS", true);
+      context.commit("SET_STATUS", true);
     });
   },
-  end({ commit, state }) {
+  end(context: ActionContext<any, any>) {
     return new Promise(() => {
-      commit("SET_STATUS", false);
+      context.commit("SET_STATUS", false);
     });
   }
 };

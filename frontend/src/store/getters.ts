@@ -1,4 +1,3 @@
-const getters = {
-  loading: state => state.loading.status,
+export default {
+  loading: state => state.loading.status
 };
-export default getters;

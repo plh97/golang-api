@@ -26,8 +26,8 @@ type Book = {
   _id: string;
   name: string;
   author: string;
-  createTime: Date;
-  updateTime: Date;
+  createAt: Date;
+  updateAt: Date;
 };
 // response interceptor
 axiosApi.interceptors.response.use(

@@ -52,8 +52,8 @@ type Book = {
   _id: string;
   name: string;
   author: string;
-  createTime: Date;
-  updateTime: Date;
+  createAt: Date;
+  updateAt: Date;
 };
 @Component({
   computed: {
@@ -79,11 +79,11 @@ export default class MyComponent extends Vue {
   public tableData: Book[] = [];
   public currentEditLineId: string = String(Math.random());
   public dialogForm: Book = {
-    _id: "",
-    name: "",
-    author: "",
-    createTime: new Date(),
-    updateTime: new Date()
+    _id: "234",
+    name: "23456",
+    author: "23456",
+    createAt: new Date(),
+    updateAt: new Date()
   };
   public dialogRules = {
     name: [

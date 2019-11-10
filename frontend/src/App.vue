@@ -1,5 +1,5 @@
 <template lang="pug">
-  .container 
+  .container
     router-view
 </template>
 
@@ -9,3 +9,10 @@ import Component from "vue-class-component";
 export default class MyComponent extends Vue {
 }
 </script>
+
+<style lang="scss">
+.container {
+  height: 100vh;
+}
+</style>
+<style>

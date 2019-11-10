@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -18,11 +17,11 @@ import (
 
 // Book is a book title
 type Book struct {
-	ID       primitive.ObjectID `bson:"_id, omitempty"`
-	Name     string             `json:"name"`
-	Author   string             `json:"author"`
-	CreateAt time.Time          `json:"createAt"`
-	UpdateAt time.Time          `json:"updateAt"`
+	ID       primitive.ObjectID
+	Name     string
+	Author   string
+	CreateAt time.Time
+	UpdateAt time.Time
 }
 
 var books []Book
@@ -91,8 +90,20 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 // 创建书
 func createBook(w http.ResponseWriter, r *http.Request) {
 	var book Book
-	books = append(books, book)
-	json.NewEncoder(w).Encode(books)
+	json.NewDecoder(r.Body).Decode(&book)
+	result, err := collection.InsertOne(
+		context.Background(),
+		bson.D{
+			{"name", book.Name},
+			{"author", book.Author},
+			{"createAt", time.Now()},
+			{"updateAt", time.Now()},
+		},
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	json.NewEncoder(w).Encode(result)
 }
 
 // 更新书
@@ -104,7 +115,6 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(2222222222, book.Author, book.Name, 111111111)
 	result, err := collection.UpdateOne(
 		context.Background(),
 		bson.D{
@@ -144,9 +154,9 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 
 func handleRoute() {
 	r := mux.NewRouter()
+	r.HandleFunc("/api/book", createBook).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/book/{id}", updateBook).Methods(http.MethodPatch, http.MethodOptions)
 	r.HandleFunc("/api/book/{id}", deleteBook).Methods(http.MethodDelete, http.MethodOptions)
-	r.HandleFunc("/api/book", createBook).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/book", getBooks).Methods(http.MethodGet)
 	r.Use(corsMiddleware)
 	r.Use(loggingMiddleware)

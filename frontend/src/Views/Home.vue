@@ -77,9 +77,9 @@ export default class HomeComponent extends Vue {
   public tableData: Book[] = [];
   public currentEditLineId: string = String(Math.random());
   public dialogForm: Book = {
-    _id: "234",
-    name: "23456",
-    author: "23456",
+    _id: "",
+    name: "",
+    author: "",
     createAt: new Date(),
     updateAt: new Date()
   };

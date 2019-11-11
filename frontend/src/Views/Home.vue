@@ -2,8 +2,13 @@
   .container
     .header
       el-button(type="primary" size="mini" @click="centerDialogVisible=true") Add Book
-    el-table(:data="tableData" style="width: 100%" v-loading="loading")
-      el-table-column(prop="_id" label="NO" width="70")
+    el-table.table(
+      :data="tableData"
+      style="width: 100%"
+      border
+      height="250"
+    )
+      el-table-column(label="NO" sortable width="70")
         template(slot-scope="scope")
           span {{ scope.$index+1 }}
       el-table-column(prop="name" label="Name")
@@ -14,10 +19,10 @@
         template(slot-scope="scope")
           el-input(v-if="currentEditLineId === scope.row._id" v-model="scope.row.author" size="mini")
           span(v-else) {{scope.row.author}}
-      el-table-column(prop="createAt" label="CreateAt")
+      el-table-column(prop="createAt" sortable label="CreateAt")
         template(slot-scope="scope")
           span {{scope.row.createAt | parseDate}}
-      el-table-column(prop="updateAt" label="UpdateAt")
+      el-table-column(prop="updateAt" sortable label="UpdateAt")
         template(slot-scope="scope")
           span {{scope.row.updateAt | parseDate}}
       el-table-column(label="Action" width="160")
@@ -45,9 +50,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { getBooks, updateBook, deleteBook, addBook } from "../dataStore";
-import { mapGetters } from 'vuex'
-// import { Form } from "element-ui";
-// export type VForm = Vue & { validate: (valid: boolean) => boolean };
+
 type Book = {
   _id: string;
   name: string;
@@ -56,11 +59,6 @@ type Book = {
   updateAt: Date;
 };
 @Component({
-  computed: {
-    ...mapGetters([
-      'loading'
-    ])
-  },
   filters: {
     parseDate(date) {
       return (
@@ -71,7 +69,7 @@ type Book = {
     }
   }
 })
-export default class MyComponent extends Vue {
+export default class HomeComponent extends Vue {
   $refs!: {
     form: HTMLFormElement;
   };
@@ -88,21 +86,21 @@ export default class MyComponent extends Vue {
   public dialogRules = {
     name: [
       { required: true, message: "Require Book Name", trigger: "blur" },
-      { min: 3, message: "At Least 3 Letter", trigger: "blur" },
-      { max: 10, message: "No More Than 10 Letter", trigger: "blur" }
+      { min: 3, message: "At Least 3 Letter", trigger: "blur" }
+      // { max: 10, message: "No More Than 10 Letter", trigger: "blur" }
     ],
     author: [
       { required: true, message: "Require Book Author", trigger: "blur" },
-      { min: 3, message: "At Least 3 Letter", trigger: "blur" },
-      { max: 10, message: "No More Than 10 Letter", trigger: "blur" }
+      { min: 1, message: "At Least 1 Letter", trigger: "blur" }
+      // { max: 10, message: "No More Than 10 Letter", trigger: "blur" }
     ]
   };
   async mounted() {
     await this.init();
   }
-  public async init(){
+  public async init() {
     try {
-      this.tableData = await getBooks()
+      this.tableData = await getBooks();
     } catch (err) {
       this.$message.error(err.message);
     }
@@ -120,7 +118,7 @@ export default class MyComponent extends Vue {
    */
   public async handleUpdateBook(book: Book) {
     await updateBook(book);
-    this.init()
+    this.init();
     this.currentEditLineId = "";
   }
   /**
@@ -129,7 +127,7 @@ export default class MyComponent extends Vue {
    */
   public async handleDeleteBook(id: string) {
     await deleteBook(id);
-    this.init()
+    this.init();
   }
   /**
    * handleCreateBook
@@ -140,7 +138,7 @@ export default class MyComponent extends Vue {
       if (valid) {
         this.centerDialogVisible = false;
         await addBook(this.dialogForm);
-        this.init()
+        this.init();
         this.dialogForm.name = "";
         this.dialogForm.author = "";
       }
@@ -158,6 +156,7 @@ export default class MyComponent extends Vue {
   .header {
     display: flex;
     justify-content: flex-end;
+    margin-bottom: 10px;
   }
   .row {
     flex: 1;

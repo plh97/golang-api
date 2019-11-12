@@ -1,19 +1,18 @@
 // profile/index.ts
-import Vuex, { Module, Store } from "vuex";
+import Vuex, { Store } from "vuex";
 import Vue from "vue";
 import getters from "./getters";
-import { RootState, ProfileState } from "./types";
 import loading from "./modules/loading";
-const namespaced: boolean = true;
+import user from "./modules/user";
 import createLogger from "vuex/dist/logger";
 
 Vue.use(Vuex);
 
 export default new Store({
-  // namespaced,
   getters,
   modules: {
-    loading
+    loading,
+    user,
   },
   plugins: [createLogger()]
 });

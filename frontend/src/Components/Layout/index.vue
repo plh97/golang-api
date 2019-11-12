@@ -1,5 +1,5 @@
 <template lang="pug">
-  .App-Main
+  .Layout
     router-view(v-loading="loading")
 </template>
 
@@ -15,13 +15,11 @@ import Component from "vue-class-component";
     ])
   }
 })
-export default class Layout extends Vue {
-  
-}
+export default class Layout extends Vue {}
 </script>
 
 <style lang="scss">
-.App-Main {
+.Layout {
   height: 100vh;
   overflow: scroll;
   padding: 10px;

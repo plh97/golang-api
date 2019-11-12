@@ -31,5 +31,8 @@ export default {
   namespaced: true,
   state,
   mutations,
-  actions
+  actions,
+  // getter: {
+  //   loading: (state: StateType) => state.status,
+  // }
 };

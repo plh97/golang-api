@@ -1,3 +1,4 @@
 export default {
-  loading: state => state.loading.status
+  loading: (state: any) => state.loading.status,
+  user: (state: any) => state.user.name
 };

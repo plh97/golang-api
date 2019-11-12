@@ -1,11 +1,23 @@
-import axios, {
-  AxiosResponse,
-  AxiosPromise,
-  AxiosError,
-  AxiosRequestConfig
-} from "axios";
+import axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
 import store from "./store/index";
-import { MessageBox, Message } from "element-ui";
+import { Message } from "element-ui";
+
+type LoginType = {
+  name: string;
+  password: string;
+};
+
+type UserInfoType = {
+  name: string;
+}
+
+type Book = {
+  _id: string;
+  name: string;
+  author: string;
+  createAt: Date;
+  updateAt: Date;
+};
 
 const axiosApi = axios.create({
   baseURL: `//${document.domain}:8002`
@@ -22,13 +34,6 @@ axiosApi.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-type Book = {
-  _id: string;
-  name: string;
-  author: string;
-  createAt: Date;
-  updateAt: Date;
-};
 // response interceptor
 axiosApi.interceptors.response.use(
   (response: AxiosResponse) => {
@@ -71,32 +76,39 @@ axiosApi.interceptors.response.use(
 
 axiosApi.interceptors.response.use((r: AxiosResponse) => r.data);
 
-export function addBook(data: Book) {
-  return axiosApi({
-    url: "/api/book",
-    method: "POST",
-    data
-  });
-}
 
-export function deleteBook(_id: string) {
-  return axiosApi({
-    url: "/api/book/" + _id,
-    method: "DELETE"
-  });
-}
-
-export function updateBook(data: Book) {
-  return axiosApi({
-    url: "/api/book/" + data._id,
-    method: "PATCH",
-    data: data
-  });
-}
-
-export function getBooks(): Promise<Book[]> {
-  return axiosApi.request<Book[], Book[]>({
-    url: "/api/book",
-    method: "GET"
-  });
-}
+export default {
+  addBook(data: Book) {
+    return axiosApi({
+      url: "/api/book",
+      method: "POST",
+      data
+    });
+  },
+  deleteBook(_id: string) {
+    return axiosApi({
+      url: "/api/book/" + _id,
+      method: "DELETE"
+    });
+  },
+  updateBook(data: Book) {
+    return axiosApi({
+      url: "/api/book/" + data._id,
+      method: "PATCH",
+      data: data
+    });
+  },
+  getBooks(): Promise<Book[]> {
+    return axiosApi.request<Book[], Book[]>({
+      url: "/api/book",
+      method: "GET"
+    });
+  },
+  login(data: LoginType) {
+    return axiosApi.request<UserInfoType, UserInfoType>({
+      url: "/api/login",
+      method: "POST",
+      data
+    });
+  }
+};

@@ -152,8 +152,22 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
+func handleLogin(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(bson.M{
+		"name": "book.Name",
+	})
+}
+
+func handleRegister(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(bson.M{
+		"name": "book.Name",
+	})
+}
+
 func handleRoute() {
 	r := mux.NewRouter()
+	r.HandleFunc("/api/register", handleRegister).Methods(http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/api/login", handleLogin).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/book", createBook).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/book/{id}", updateBook).Methods(http.MethodPatch, http.MethodOptions)
 	r.HandleFunc("/api/book/{id}", deleteBook).Methods(http.MethodDelete, http.MethodOptions)

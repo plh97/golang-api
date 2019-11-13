@@ -1,5 +1,6 @@
 import { ActionContext } from "vuex";
-import dataStore from '../../dataStore'
+import {Account} from '../../dataStore'
+import { getToken, setToken, removeToken } from "../../utils/auth";
 
 type StateType = {
   name: string;
@@ -20,7 +21,7 @@ const actions = {
   login(context: ActionContext<any, any>) {
     return new Promise(async(resolve,reject) => {
       try {
-        const {name} = await dataStore.login({
+        const {name} = await Account.login({
           name: '',
           password: '',
         })
@@ -30,6 +31,18 @@ const actions = {
         reject(error)
       }
     })
+  },
+  logout(context: ActionContext<any, any>) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        context.commit("SET_NAME", "");
+        context.commit("SET_TOKEN", "");
+        removeToken();
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 };
 
@@ -38,7 +51,4 @@ export default {
   state,
   mutations,
   actions,
-  // getter: {
-  //   name: (state: StateType) => state.name
-  // }
 };

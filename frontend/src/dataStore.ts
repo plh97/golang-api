@@ -9,7 +9,7 @@ type LoginType = {
 
 type UserInfoType = {
   name: string;
-}
+};
 
 type Book = {
   _id: string;
@@ -30,18 +30,13 @@ axiosApi.interceptors.request.use(
     return config;
   },
   (error: AxiosError) => {
-    // do something with request error
     return Promise.reject(error);
   }
 );
-// response interceptor
 axiosApi.interceptors.response.use(
   (response: AxiosResponse) => {
-    // const res = response.data;
-    // 先根据statusCode判断
     store.dispatch("loading/end");
     if (response.status >= 400 || response.status < 200) {
-      // 如果是非200的,则判断是哪种类型的错误,并handle住
       if (response.status === 401) {
         Message({
           message: "Unauthorized request",
@@ -76,8 +71,7 @@ axiosApi.interceptors.response.use(
 
 axiosApi.interceptors.response.use((r: AxiosResponse) => r.data);
 
-
-export default {
+export const Book = {
   addBook(data: Book) {
     return axiosApi({
       url: "/api/book",
@@ -103,12 +97,26 @@ export default {
       url: "/api/book",
       method: "GET"
     });
-  },
+  }
+};
+
+export const Account = {
   login(data: LoginType) {
     return axiosApi.request<UserInfoType, UserInfoType>({
       url: "/api/login",
       method: "POST",
       data
     });
-  }
+  },
+  logout(data: LoginType) {
+    return axiosApi.request<UserInfoType, UserInfoType>({
+      url: "/api/logout",
+      method: "POST",
+    });
+  },
 };
+
+// export default {
+//   Book,
+//   Account
+// };

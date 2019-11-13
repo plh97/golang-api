@@ -25,6 +25,7 @@
     "@types/node": "^12.7.12",
     "axios": "^0.19.0",
     "element-ui": "^2.12.0",
+    "js-cookie": "^2.2.1",
     "socker.io": "^0.0.0-alpha-beta",
     "socket.io-client": "^2.3.0",
     "vue": "^2.6.10",

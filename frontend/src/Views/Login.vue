@@ -15,7 +15,7 @@
 import Vue from "vue";
 // import { mapGetters } from "vuex";
 import Component from "vue-class-component";
-import dataStore from "../dataStore";
+import { Account } from "../dataStore";
 
 type LoginType = {
   name: string;
@@ -40,7 +40,7 @@ export default class Login extends Vue {
     this.name = name;
   }
   public async handleRegister(): Promise<void> {
-    const res = await dataStore.login(this.loginForm);
+    const res = await Account.login(this.loginForm);
     console.log(res)
   }
 }

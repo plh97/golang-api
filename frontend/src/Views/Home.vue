@@ -49,7 +49,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import dataStore from "../dataStore";
+import {Book,Account} from "../dataStore";
 
 type Book = {
   _id: string;
@@ -100,7 +100,7 @@ export default class HomeComponent extends Vue {
   }
   public async init() {
     try {
-      this.tableData = await dataStore.getBooks();
+      this.tableData = await Book.getBooks();
     } catch (err) {
       this.$message.error(err.message);
     }
@@ -117,7 +117,7 @@ export default class HomeComponent extends Vue {
    * @param {id}
    */
   public async handleUpdateBook(book: Book) {
-    await dataStore.updateBook(book);
+    await Book.updateBook(book);
     this.init();
     this.currentEditLineId = "";
   }
@@ -126,7 +126,7 @@ export default class HomeComponent extends Vue {
    * @param {id}
    */
   public async handleDeleteBook(id: string) {
-    await dataStore.deleteBook(id);
+    await Book.deleteBook(id);
     this.init();
   }
   /**
@@ -137,7 +137,7 @@ export default class HomeComponent extends Vue {
     this.$refs.form.validate(async (valid: boolean) => {
       if (valid) {
         this.centerDialogVisible = false;
-        await dataStore.addBook(this.dialogForm);
+        await Book.addBook(this.dialogForm);
         this.init();
         this.dialogForm.name = "";
         this.dialogForm.author = "";

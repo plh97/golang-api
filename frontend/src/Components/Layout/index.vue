@@ -1,29 +1,36 @@
 <template lang="pug">
   .Layout
-    router-view(v-loading="loading")
+    Navbar
+    .body
+      router-view(v-loading="loading")
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
 import Component from "vue-class-component";
+import Navbar from "./Navbar.vue";
 
 @Component({
+  components: { Navbar },
   computed: {
-    ...mapGetters([
-      'loading'
-    ])
+    ...mapGetters(["loading"])
   }
 })
 export default class Layout extends Vue {}
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 .Layout {
   height: 100vh;
   overflow: scroll;
-  padding: 10px;
-  box-sizing: border-box;
+  // box-sizing: border-box;
   -webkit-overflow-scrolling: touch; /* Lets it scroll lazy */
+
+  .body {
+    padding: 10px;
+    height: calc(100vh - 50px);
+    box-sizing: border-box;
+  }
 }
 </style>

@@ -94,10 +94,10 @@ func createBook(w http.ResponseWriter, r *http.Request) {
 	result, err := collection.InsertOne(
 		context.Background(),
 		bson.D{
-			{"name", book.Name},
-			{"author", book.Author},
-			{"createAt", time.Now()},
-			{"updateAt", time.Now()},
+			primitive.E{Key: "name", Value: book.Name},
+			primitive.E{Key: "author", Value: book.Author},
+			primitive.E{Key: "createAt", Value: time.Now()},
+			primitive.E{Key: "updateAt", Value: time.Now()},
 		},
 	)
 	if err != nil {
@@ -118,13 +118,13 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 	result, err := collection.UpdateOne(
 		context.Background(),
 		bson.D{
-			{"_id", objectID},
+			primitive.E{Key: "_id", Value: objectID},
 		},
 		bson.D{
-			{"$set", bson.D{
-				{"name", book.Name},
-				{"author", book.Author},
-				{"updateAt", time.Now()},
+			primitive.E{Key:"$set",Value: bson.D{
+				primitive.E{Key: "name", Value: book.Name},
+				primitive.E{Key: "author", Value: book.Author},
+				primitive.E{Key: "updateAt", Value: time.Now()},
 			}},
 		},
 	)
@@ -143,7 +143,7 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 	result, err := collection.DeleteOne(
 		context.Background(),
 		bson.D{
-			{"_id", objectID},
+			primitive.E{Key: "_id", Value: objectID},
 		},
 	)
 	if err != nil {
@@ -161,6 +161,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 func handleRegister(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(bson.M{
 		"name": "book.Name",
+		"token": "wefrtykujhgf234567u",
 	})
 }
 

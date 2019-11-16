@@ -1,13 +1,13 @@
 <template lang="pug">
   .Login {{name}}
     .title Register
-    el-form(label-width="120px" :model="loginForm")
+    el-form(label-width="120px" :model="form")
       el-form-item(label="Name")
-        el-input(v-model="loginForm.name")
+        el-input(v-model="form.name")
       el-form-item(label="Password")
-        el-input(v-model="loginForm.password")
+        el-input(v-model="form.password")
       el-form-item(label="Repeat Password")
-        el-input(v-model="loginForm.repeatPassword")
+        el-input(v-model="form.repeatPassword")
       el-form-item
         router-link(to="/login")
           el-button Login
@@ -22,9 +22,10 @@ import { mapGetters } from "vuex";
 import Component from "vue-class-component";
 import { Account } from "../dataStore";
 
-type LoginType = {
+type FormType = {
   name: string;
   password: string;
+  repeatPassword: string;
 };
 
 @Component({
@@ -35,12 +36,13 @@ type LoginType = {
   }
 })
 export default class Register extends Vue {
-  public loginForm: LoginType = {
+  public form: FormType = {
     name: "",
-    password: ""
+    password: "",
+    repeatPassword: ""
   };
   public async handleRegister(): Promise<void> {
-    const name = await this.$store.dispatch('user/register', this.loginForm)
+    const name = await this.$store.dispatch('user/register', this.form)
   }
 }
 </script>

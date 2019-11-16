@@ -44,14 +44,17 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   console.log('hasToken', getToken(), store.getters.token);
-  if (to.path === '/login' || to.path === '/register') {
-    return next();
-  } else if (store.getters.token) {
-    return next();
+  // 策略
+  // to -> login
+  if (getToken()) {
+    if (to.path === '/login' || to.path === '/register') {
+      return next({ path: '/' });
+    }else{
+      return next();
+    }
   } else {
     // 如果没有 token
-    if (getToken()) {
-      store.commit('SET_TOKEN', getToken())
+    if (to.path === '/login' || to.path === '/register') {
       next()
     } else {
       next({ path: '/login' });

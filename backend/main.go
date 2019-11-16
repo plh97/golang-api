@@ -95,7 +95,7 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(
 		bson.M{
 			"errorCode": 0,
-			"data": res,
+			"data":      res,
 		},
 	)
 }
@@ -119,7 +119,7 @@ func createBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(
 		bson.M{
 			"errorCode": 0,
-			"data": result,
+			"data":      result,
 		},
 	)
 }
@@ -152,7 +152,7 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(
 		bson.M{
 			"errorCode": 0,
-			"data": result,
+			"data":      result,
 		},
 	)
 }
@@ -175,7 +175,7 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(
 		bson.M{
 			"errorCode": 0,
-			"data": result,
+			"data":      result,
 		},
 	)
 }
@@ -189,11 +189,11 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 	errFind := accountsCollection.FindOne(
 		context.Background(),
 		bson.M{
-			"name": account.Name,
+			"name":     account.Name,
 			"password": account.Password,
 		},
 	).Decode(&resultFind)
-	if errFind == nil {
+	if errFind != nil {
 		json.NewEncoder(w).Encode(bson.M{
 			"message":   "account name or password not right",
 			"errorCode": 1,
@@ -203,7 +203,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(bson.M{
 		"errorCode": 0,
 		"data": bson.M{
-			"name": "book.Name",
+			"name":  "book.Name",
 			"token": "2345uilerghtjyukr",
 		},
 	})

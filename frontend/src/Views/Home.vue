@@ -100,7 +100,8 @@ export default class HomeComponent extends Vue {
   }
   public async init() {
     try {
-      this.tableData = await Book.getBooks();
+      const res = await Book.getBooks();
+      this.tableData = res.data;
     } catch (err) {
       this.$message.error(err.message);
     }

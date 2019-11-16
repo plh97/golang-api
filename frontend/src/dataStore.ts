@@ -12,6 +12,11 @@ interface UserInfoType {
   token: string;
 }
 
+interface ResponseType {
+  errorCode: number;
+  data: any
+}
+
 interface Book {
   _id: string;
   name: string;
@@ -59,9 +64,6 @@ axiosApi.interceptors.response.use(
           message: res.message,
           type: 'error'
         });
-        throw new Error(res)
-      } else {
-        return res
       }
     }
     return response;
@@ -80,7 +82,9 @@ axiosApi.interceptors.response.use(
   }
 );
 
-axiosApi.interceptors.response.use((r: AxiosResponse) => r.data);
+axiosApi.interceptors.response.use((r: AxiosResponse) => {
+  return r.data
+});
 
 export const Book = {
   addBook(data: Book) {
@@ -103,8 +107,8 @@ export const Book = {
       data
     });
   },
-  getBooks(): Promise<Book[]> {
-    return axiosApi.request<Book[], Book[]>({
+  getBooks(): Promise<ResponseType> {
+    return axiosApi.request<ResponseType, ResponseType>({
       url: '/api/book',
       method: 'GET'
     });
@@ -113,20 +117,20 @@ export const Book = {
 
 export const Account = {
   login(data: LoginType) {
-    return axiosApi.request<UserInfoType, UserInfoType>({
+    return axiosApi.request<ResponseType, ResponseType>({
       url: '/api/login',
       method: 'POST',
       data
     });
   },
   logout(data: LoginType) {
-    return axiosApi.request<UserInfoType, UserInfoType>({
+    return axiosApi.request<UserInfoType, ResponseType>({
       url: '/api/logout',
       method: 'POST',
     });
   },
   register(data: LoginType) {
-    return axiosApi.request<UserInfoType, UserInfoType>({
+    return axiosApi.request<UserInfoType, ResponseType>({
       url: '/api/register',
       method: 'POST',
       data

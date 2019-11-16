@@ -18,6 +18,7 @@ const mutations = {
     state.name = name;
   },
   SET_TOKEN: (state: StateType, token: string) => {
+    debugger
     setToken(token)
     state.token = token;
   },
@@ -32,10 +33,16 @@ const actions = {
   login(context: ActionContext<any, any>, form: LoginType) {
     return new Promise(async (resolve, reject) => {
       try {
-        const { name, token } = await Account.login(form)
-        context.commit('SET_NAME', name);
-        context.commit('SET_TOKEN', token);
-        resolve(name);
+        const res = await Account.login(form)
+        const { errorCode, data } = res
+        if (errorCode === 0) {
+          const { name, token } = data
+          context.commit('SET_NAME', name);
+          context.commit('SET_TOKEN', token);
+          resolve(res);
+        }else{
+          reject(res)
+        }
       } catch (error) {
         reject(error)
       }
@@ -56,11 +63,17 @@ const actions = {
   register(context: ActionContext<any, any>, form: LoginType) {
     return new Promise(async (resolve, reject) => {
       try {
-        const { name, token } = await Account.register(form)
-        context.commit('SET_NAME', name);
-        context.commit('REMOVE_TOKEN', token);
-        removeToken();
-        resolve();
+        const res = await Account.register(form)
+        const { errorCode, data } = res
+        if (errorCode === 0) {
+          const { name, token } = data
+          context.commit('SET_NAME', name);
+          context.commit('SET_TOKEN', token);
+          removeToken();
+          resolve(res);
+        }else{
+          reject(res);
+        }
       } catch (error) {
         reject(error);
       }

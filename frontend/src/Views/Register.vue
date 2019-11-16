@@ -37,12 +37,17 @@ type FormType = {
 })
 export default class Register extends Vue {
   public form: FormType = {
-    name: "",
-    password: "",
-    repeatPassword: ""
+    name: "admin",
+    password: "12345678",
+    repeatPassword: "12345678"
   };
   public async handleRegister(): Promise<void> {
-    const name = await this.$store.dispatch('user/register', this.form)
+    await this.$store.dispatch('user/register', {
+      name: this.form.name,
+      password: this.form.password,
+    })
+    this.$message.success("success register")
+    this.$router.push("/")
   }
 }
 </script>

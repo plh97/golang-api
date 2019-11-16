@@ -2,22 +2,27 @@
   .Navbar
     el-dropdown(trigger="click")
       .el-dropdown-link
-        el-avatar(shape="square") user
+        el-avatar(shape="square") {{name}}
         i.el-icon-caret-bottom
       el-dropdown-menu(slot="dropdown")
-        el-dropdown-item(divided) 
+        el-dropdown-item 
           span(@click="handleLogout") log out
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from "vue-class-component";
+import { mapGetters } from "vuex";
 
 @Component({
+  computed: {
+    ...mapGetters([
+      "name"
+    ])
+  },
   methods: {
     async handleLogout(){
-      debugger
-      // await this.$store.dispatch('user/logout')
+      await this.$store.dispatch('user/logout')
       this.$router.push('/login')
       this.$message.success('Successfully logout')
     }

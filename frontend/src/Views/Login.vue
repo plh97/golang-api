@@ -1,5 +1,5 @@
 <template lang="pug">
-  .Login {{name}}
+  .Login
     .title Log In
     el-form(label-width="120px" :model="loginForm")
       el-form-item(label="Name")
@@ -16,7 +16,6 @@
 
 <script lang="ts">
 import Vue from "vue";
-// import { mapGetters } from "vuex";
 import Component from "vue-class-component";
 import { Account } from "../dataStore";
 
@@ -25,26 +24,16 @@ type LoginType = {
   password: string;
 };
 
-@Component({
-  // computed: {
-  //   ...mapGetters([
-  //     "name"
-  //   ])
-  // }
-})
+@Component({})
 export default class Login extends Vue {
   public loginForm: LoginType = {
     name: "",
     password: ""
   };
-  public name: string = "";
   public async handleLogin(): Promise<void> {
-    const name = await this.$store.dispatch('user/login', this.loginForm)
-    this.name = name;
-  }
-  public async handleRegister(): Promise<void> {
-    const res = await Account.login(this.loginForm);
-    console.log(res)
+    await this.$store.dispatch("user/login", this.loginForm);
+    this.$message.success("success login in")
+    this.$router.push("/")
   }
 }
 </script>

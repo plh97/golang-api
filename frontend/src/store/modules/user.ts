@@ -7,25 +7,34 @@ interface StateType {
   token: string;
 }
 
+interface LoginType {
+  name: string;
+  password: string;
+}
+
+
 const mutations = {
   SET_NAME: (state: StateType, name: string) => {
     state.name = name;
   },
   SET_TOKEN: (state: StateType, token: string) => {
+    setToken(token)
     state.token = token;
+  },
+  REMOVE_TOKEN: (state: StateType, token: string) => {
+    removeToken()
+    state.token = '';
   },
 };
 
 const actions = {
   // get user info
-  login(context: ActionContext<any, any>) {
+  login(context: ActionContext<any, any>, form: LoginType) {
     return new Promise(async (resolve, reject) => {
       try {
-        const { name } = await Account.login({
-          name: '',
-          password: '',
-        })
+        const { name, token } = await Account.login(form)
         context.commit('SET_NAME', name);
+        context.commit('SET_TOKEN', token);
         resolve(name);
       } catch (error) {
         reject(error)
@@ -35,10 +44,6 @@ const actions = {
   logout(context: ActionContext<any, any>) {
     return new Promise(async (resolve, reject) => {
       try {
-        await Account.logout({
-          name: '',
-          password: '',
-        })
         context.commit('SET_NAME', '');
         context.commit('SET_TOKEN', '');
         removeToken();
@@ -48,15 +53,12 @@ const actions = {
       }
     });
   },
-  register(context: ActionContext<any, any>) {
+  register(context: ActionContext<any, any>, form: LoginType) {
     return new Promise(async (resolve, reject) => {
       try {
-        const { name, token } = await Account.register({
-          name: '',
-          password: '',
-        })
+        const { name, token } = await Account.register(form)
         context.commit('SET_NAME', name);
-        context.commit('SET_TOKEN', token);
+        context.commit('REMOVE_TOKEN', token);
         removeToken();
         resolve();
       } catch (error) {
@@ -69,7 +71,8 @@ const actions = {
 export default {
   namespaced: true,
   state: {
-    name: ''
+    name: '',
+    token: ''
   },
   mutations,
   actions,

@@ -5,6 +5,7 @@ import Home from './Views/Home';
 import Login from './Views/Login';
 import Register from './Views/Register';
 import { getToken } from './utils/auth'; // get token from cookie
+import store from './store'; // get token from cookie
 
 Vue.use(VueRouter);
 
@@ -42,15 +43,19 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const hasToken = getToken();
-  console.log('hasToken', hasToken);
+  console.log('hasToken', getToken(), store.getters.token);
   if (to.path === '/login' || to.path === '/register') {
     return next();
-  } else if (hasToken) {
+  } else if (store.getters.token) {
     return next();
   } else {
     // 如果没有 token
-    next({ path: '/login' });
+    if (getToken()) {
+      store.commit('SET_TOKEN', getToken())
+      next()
+    } else {
+      next({ path: '/login' });
+    }
   }
 });
 

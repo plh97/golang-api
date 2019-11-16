@@ -53,6 +53,16 @@ axiosApi.interceptors.response.use(
       }
     } else {
       // 处理200的逻辑
+      const res = response.data
+      if (res.errorCode !== 0) {
+        Message({
+          message: res.message,
+          type: 'error'
+        });
+        throw new Error(res)
+      } else {
+        return res
+      }
     }
     return response;
   },
@@ -119,6 +129,7 @@ export const Account = {
     return axiosApi.request<UserInfoType, UserInfoType>({
       url: '/api/register',
       method: 'POST',
+      data
     });
   },
 };

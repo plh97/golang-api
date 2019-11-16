@@ -24,8 +24,15 @@ type Book struct {
 	UpdateAt time.Time
 }
 
+// Account is a account type
+type Account struct {
+	Name     string
+	Password string
+}
+
 var books []Book
-var collection *mongo.Collection
+var booksCollection *mongo.Collection
+var accountsCollection *mongo.Collection
 var ctx context.Context
 
 // ObjectID id
@@ -63,7 +70,8 @@ func handleMongodb() {
 		log.Fatal(err)
 	}
 	log.Println("Connected to MongoDB!")
-	collection = client.Database("testing").Collection("numbers")
+	booksCollection = client.Database("testing").Collection("books")
+	accountsCollection = client.Database("testing").Collection("accounts")
 }
 
 func main() {
@@ -74,7 +82,7 @@ func main() {
 // 获取所有书
 func getBooks(w http.ResponseWriter, r *http.Request) {
 	ctx, _ = context.WithTimeout(context.Background(), 30*time.Second)
-	cur, _ := collection.Find(ctx, bson.D{})
+	cur, _ := booksCollection.Find(ctx, bson.D{})
 	res := []bson.M{}
 	for cur.Next(ctx) {
 		var result bson.M
@@ -84,14 +92,19 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 		}
 		res = append(res, result)
 	}
-	json.NewEncoder(w).Encode(res)
+	json.NewEncoder(w).Encode(
+		bson.M{
+			"errorCode": 0,
+			"data": res,
+		},
+	)
 }
 
 // 创建书
 func createBook(w http.ResponseWriter, r *http.Request) {
 	var book Book
 	json.NewDecoder(r.Body).Decode(&book)
-	result, err := collection.InsertOne(
+	result, err := booksCollection.InsertOne(
 		context.Background(),
 		bson.D{
 			primitive.E{Key: "name", Value: book.Name},
@@ -103,7 +116,12 @@ func createBook(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(
+		bson.M{
+			"errorCode": 0,
+			"data": result,
+		},
+	)
 }
 
 // 更新书
@@ -115,13 +133,13 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	result, err := collection.UpdateOne(
+	result, err := booksCollection.UpdateOne(
 		context.Background(),
 		bson.D{
 			primitive.E{Key: "_id", Value: objectID},
 		},
 		bson.D{
-			primitive.E{Key:"$set",Value: bson.D{
+			primitive.E{Key: "$set", Value: bson.D{
 				primitive.E{Key: "name", Value: book.Name},
 				primitive.E{Key: "author", Value: book.Author},
 				primitive.E{Key: "updateAt", Value: time.Now()},
@@ -131,7 +149,12 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(
+		bson.M{
+			"errorCode": 0,
+			"data": result,
+		},
+	)
 }
 
 func deleteBook(w http.ResponseWriter, r *http.Request) {
@@ -140,7 +163,7 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	result, err := collection.DeleteOne(
+	result, err := booksCollection.DeleteOne(
 		context.Background(),
 		bson.D{
 			primitive.E{Key: "_id", Value: objectID},
@@ -149,19 +172,73 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(
+		bson.M{
+			"errorCode": 0,
+			"data": result,
+		},
+	)
 }
 
 func handleLogin(w http.ResponseWriter, r *http.Request) {
+	var account Account
+	var resultFind struct {
+		Value float64
+	}
+	json.NewDecoder(r.Body).Decode(&account)
+	errFind := accountsCollection.FindOne(
+		context.Background(),
+		bson.M{
+			"name": account.Name,
+			"password": account.Password,
+		},
+	).Decode(&resultFind)
+	if errFind == nil {
+		json.NewEncoder(w).Encode(bson.M{
+			"message":   "account name or password not right",
+			"errorCode": 1,
+		})
+		return
+	}
 	json.NewEncoder(w).Encode(bson.M{
-		"name": "book.Name",
+		"errorCode": 0,
+		"data": bson.M{
+			"name": "book.Name",
+			"token": "2345uilerghtjyukr",
+		},
 	})
 }
 
 func handleRegister(w http.ResponseWriter, r *http.Request) {
+	var account Account
+	var resultFind struct {
+		Value float64
+	}
+	json.NewDecoder(r.Body).Decode(&account)
+	errFind := accountsCollection.FindOne(
+		context.Background(),
+		bson.M{"name": account.Name},
+	).Decode(&resultFind)
+	if errFind == nil {
+		json.NewEncoder(w).Encode(bson.M{
+			"message":   "account has been register",
+			"errorCode": 1,
+		})
+		return
+	}
+	accountsCollection.InsertOne(
+		context.Background(),
+		bson.D{
+			primitive.E{Key: "name", Value: account.Name},
+			primitive.E{Key: "password", Value: account.Password},
+		},
+	)
 	json.NewEncoder(w).Encode(bson.M{
-		"name": "book.Name",
-		"token": "wefrtykujhgf234567u",
+		"errorCode": 0,
+		"data": bson.M{
+			"name":  "book.Name",
+			"token": "2345uilerghtjyukr",
+		},
 	})
 }
 

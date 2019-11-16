@@ -36,9 +36,12 @@
   },
   "devDependencies": {
     "@vue/component-compiler-utils": "^3.0.0",
+    "prettier": "^1.19.1",
     "pug": "^2.0.4",
     "sass": "^1.23.0",
     "tslint": "^5.20.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
     "typescript": "^3.6.4",
     "vue-template-compiler": "^2.6.10"
   }

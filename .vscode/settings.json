@@ -2,7 +2,11 @@
   "git.ignoreLimitWarning": true,
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
-  "tslint.configFile": "./frontend/tslint.json",
+  "tslint.jsEnable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.tslint": true,
+  },
+  "tslint.configFile": "./tslint.json",
   // "files.autoSave": "onFocusChange",
   "go.inferGopath": true,
   // "go.buildOnSave": "workspace",

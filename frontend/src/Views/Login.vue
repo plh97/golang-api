@@ -1,13 +1,16 @@
 <template lang="pug">
   .Login {{name}}
-    el-form(label-width="100px" :model="loginForm")
+    .title Log In
+    el-form(label-width="120px" :model="loginForm")
       el-form-item(label="Name")
         el-input(v-model="loginForm.name")
       el-form-item(label="Password")
         el-input(v-model="loginForm.password")
       el-form-item
         el-button(type="primary" @click="handleLogin") Login
-        el-button(@click="handleRegister") register
+        span &nbsp;&nbsp;
+        router-link(to="/register")
+          el-button register
 
 </template>
 
@@ -47,11 +50,13 @@ export default class Login extends Vue {
 </script>
 
 <style lang="scss">
-.App-Main {
-  height: 100vh;
-  overflow: scroll;
-  padding: 10px;
-  box-sizing: border-box;
-  -webkit-overflow-scrolling: touch; /* Lets it scroll lazy */
+.Login {
+  padding: 40px 80px;
+  .title {
+    display: block;
+    font-size: 20px;
+    margin: 20px;
+    text-align: center;
+  }
 }
 </style>

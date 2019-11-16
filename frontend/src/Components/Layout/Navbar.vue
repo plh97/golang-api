@@ -2,24 +2,28 @@
   .Navbar
     el-dropdown(trigger="click")
       .el-dropdown-link
-        el-avatar(shape="square") users
+        el-avatar(shape="square") user
         i.el-icon-caret-bottom
       el-dropdown-menu(slot="dropdown")
-        el-dropdown-item(@click="handleLogout") log outs
+        el-dropdown-item(divided) 
+          span(@click="handleLogout") log out
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from "vue-class-component";
 
-@Component({})
-export default class Navbar extends Vue {
-  public async handleLogout(){
-    debugger
-    // await this.$store.dispatch('user/logout')
-    this.$router.push('/login')
-    this.$message.success('Successfully logout')
+@Component({
+  methods: {
+    async handleLogout(){
+      debugger
+      // await this.$store.dispatch('user/logout')
+      this.$router.push('/login')
+      this.$message.success('Successfully logout')
+    }
   }
+})
+export default class Navbar extends Vue {
 }
 </script>
 

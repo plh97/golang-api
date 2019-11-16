@@ -1,4 +1,5 @@
 {
+  "configFile": "./tslint.json",
   "compilerOptions": {
     // this aligns with Vue's browser support
     "target": "es5",
@@ -6,14 +7,20 @@
     "strict": true,
     // if using webpack 2+ or rollup, to leverage tree shaking:
     "module": "es2015",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": [
     "src/**/*.ts",
-    "src/*.ts",
+    "src/*.ts"
     // "tests/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"],
+  "rulesDirectory": ["tslint-plugin-prettier"],
+  "rules": {
+    "prettier": [true, null, { "editorconfig": false }]
+  }
 }

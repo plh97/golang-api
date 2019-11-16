@@ -1,31 +1,31 @@
-import { ActionContext } from "vuex";
-import {Account} from '../../dataStore'
-import { getToken, setToken, removeToken } from "../../utils/auth";
+import { ActionContext } from 'vuex';
+import { Account } from '../../dataStore'
+import { getToken, setToken, removeToken } from '../../utils/auth';
 
-type StateType = {
+interface StateType {
   name: string;
-};
-
-const state = {
-  name: ''
-};
+  token: string;
+}
 
 const mutations = {
   SET_NAME: (state: StateType, name: string) => {
     state.name = name;
-  }
+  },
+  SET_TOKEN: (state: StateType, token: string) => {
+    state.token = token;
+  },
 };
 
 const actions = {
   // get user info
   login(context: ActionContext<any, any>) {
-    return new Promise(async(resolve,reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
-        const {name} = await Account.login({
+        const { name } = await Account.login({
           name: '',
           password: '',
         })
-        context.commit("SET_NAME", name);
+        context.commit('SET_NAME', name);
         resolve(name);
       } catch (error) {
         reject(error)
@@ -35,8 +35,28 @@ const actions = {
   logout(context: ActionContext<any, any>) {
     return new Promise(async (resolve, reject) => {
       try {
-        context.commit("SET_NAME", "");
-        context.commit("SET_TOKEN", "");
+        await Account.logout({
+          name: '',
+          password: '',
+        })
+        context.commit('SET_NAME', '');
+        context.commit('SET_TOKEN', '');
+        removeToken();
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  register(context: ActionContext<any, any>) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { name, token } = await Account.register({
+          name: '',
+          password: '',
+        })
+        context.commit('SET_NAME', name);
+        context.commit('SET_TOKEN', token);
         removeToken();
         resolve();
       } catch (error) {
@@ -48,7 +68,9 @@ const actions = {
 
 export default {
   namespaced: true,
-  state,
+  state: {
+    name: ''
+  },
   mutations,
   actions,
 };

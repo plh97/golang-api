@@ -1,11 +1,8 @@
-import { ActionContext } from "vuex";
-const state = {
-  status: false
-};
+import { ActionContext } from 'vuex';
 
-type StateType = {
+interface StateType {
   status: boolean;
-};
+}
 
 const mutations = {
   SET_STATUS: (state: StateType, status: boolean) => {
@@ -17,19 +14,22 @@ const actions = {
   // get user info
   start(context: ActionContext<any, any>) {
     return new Promise(() => {
-      context.commit("SET_STATUS", true);
+      context.commit('SET_STATUS', true);
     });
   },
   end(context: ActionContext<any, any>) {
     return new Promise(() => {
-      context.commit("SET_STATUS", false);
+      context.commit('SET_STATUS', false);
     });
   }
 };
 
 export default {
+  name: 'loading',
   namespaced: true,
-  state,
+  state: {
+    status: false
+  },
   mutations,
   actions,
   // getter: {

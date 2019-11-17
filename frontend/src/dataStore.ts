@@ -14,7 +14,8 @@ interface UserInfoType {
 
 interface ResponseType {
   errorCode: number;
-  data: any
+  data: any;
+  message: string;
 }
 
 interface Book {

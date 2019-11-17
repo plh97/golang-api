@@ -43,13 +43,13 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log('hasToken', getToken(), store.getters.token);
+  console.log('hasToken', getToken());
   // 策略
   // to -> login
   if (getToken()) {
     if (to.path === '/login' || to.path === '/register') {
       return next({ path: '/' });
-    }else{
+    } else {
       return next();
     }
   } else {

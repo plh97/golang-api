@@ -7,12 +7,12 @@ import (
 	"net/http"
 	"time"
 
+	// "github.com/go-redis/redis"
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive" // for BSON ObjectID
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"github.com/gorilla/mux"
 )
 
 // Book is a book title
@@ -77,6 +77,7 @@ func handleMongodb() {
 func main() {
 	handleMongodb()
 	handleRoute()
+	// handleRedis()
 }
 
 // 获取所有书
@@ -242,8 +243,19 @@ func handleRegister(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func handleGetUserInfo(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(bson.M{
+		"errorCode": 0,
+		"data": bson.M{
+			"name":  "book.Name",
+			"token": "2345uilerghtjyukr",
+		},
+	})
+}
+
 func handleRoute() {
 	r := mux.NewRouter()
+	// r.HandleFunc("/api/userInfo", handleGetUserInfo).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/api/register", handleRegister).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/login", handleLogin).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/book", createBook).Methods(http.MethodOptions, http.MethodPost)
@@ -254,3 +266,34 @@ func handleRoute() {
 	r.Use(loggingMiddleware)
 	http.ListenAndServe(":8080", r)
 }
+
+// func handleRedis() {
+// 	client := redis.NewClient(&redis.Options{
+// 		Addr:     "redis:6379",
+// 		Password: "",
+// 		DB:       0,
+// 	})
+
+// 	pong, err1 := client.Ping().Result()
+// 	fmt.Println(pong, err1)
+
+// 	err := client.Set("key", "value", 0).Err()
+// 	if err != nil {
+// 		panic(err)
+// 	}
+
+// 	val, err := client.Get("key").Result()
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	fmt.Println("key", val)
+
+// 	val2, err := client.Get("key2").Result()
+// 	if err == redis.Nil {
+// 		fmt.Println("key2 does not exist")
+// 	} else if err != nil {
+// 		panic(err)
+// 	} else {
+// 		fmt.Println("key2", val2)
+// 	}
+// }

@@ -1,7 +1,8 @@
 import axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from 'axios';
 import store from './store/index';
+import router from './router';
 import { Message } from 'element-ui';
-import { getToken } from './utils/auth';
+import { getToken, removeToken } from './utils/auth';
 
 interface LoginType {
   name: string;
@@ -29,12 +30,9 @@ interface Book {
 
 const axiosApi = axios.create({
   baseURL: `//${document.domain}:8002`,
-  // headers: {
-  //   'Access-Control-Allow-Origin': '*',
-  //   token: getToken()
-  // },
+  timeout: 5000, // 请求超时时间
+  withCredentials: true,
 });
-axios.defaults.withCredentials = true
 // request interceptor
 axiosApi.interceptors.request.use(
   (config: AxiosRequestConfig) => {
@@ -48,29 +46,13 @@ axiosApi.interceptors.request.use(
 axiosApi.interceptors.response.use(
   (response: AxiosResponse) => {
     store.dispatch('loading/end');
-    if (response.status >= 400 || response.status < 200) {
-      if (response.status === 401) {
-        Message({
-          message: 'Unauthorized request',
-          type: 'error',
-          duration: 2000
-        });
-      } else {
-        Message({
-          message: 'Could not connect to server',
-          type: 'error',
-          duration: 2000
-        });
-      }
-    } else {
-      // 处理200的逻辑
-      const res = response.data
-      if (res.errorCode !== 0) {
-        Message({
-          message: res.message,
-          type: 'error'
-        });
-      }
+    // 处理200的逻辑
+    const res = response.data
+    if (res.errorCode !== 0) {
+      Message({
+        message: res.message,
+        type: 'error'
+      });
     }
     return response;
   },
@@ -84,6 +66,8 @@ axiosApi.interceptors.response.use(
         duration: 2000
       });
     }
+    removeToken()
+    router.push('/login')
     return Promise.reject(error);
   }
 );

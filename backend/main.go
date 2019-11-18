@@ -4,6 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"time"
+
 	JWT "github.com/dgrijalva/jwt-go"
 	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
@@ -11,9 +15,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
-	"net/http"
-	"time"
 )
 
 // Book is a book title
@@ -38,6 +39,7 @@ var books []Book
 var booksCollection *mongo.Collection
 var accountsCollection *mongo.Collection
 var ctx context.Context
+var tokenRedis []string
 
 const cookieTokenName = "Admin-Token"
 
@@ -65,18 +67,29 @@ func corsMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func indexOf(arr []string, val string) int {
+	for i, v := range arr {
+		if val == v {
+			return i
+		}
+	}
+	return -1
+}
+
 func tokenMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if cookie, err := r.Cookie(cookieTokenName); err == nil {
-			// here to check whether token is valid and expired
-			fmt.Println(111111111, cookie)
-			// value := make(map[string]string)
-			// if err = s2.Decode("cookie-name", cookie.Value, &value); err == nil {
-			// 	fmt.Fprintf(w, "The value of foo is %q", value["foo"])
-			// }
+		if r.URL.Path == "/api/login" || r.URL.Path == "/api/register" {
+			next.ServeHTTP(w, r)
+			return
+		} else if cookie, err := r.Cookie(cookieTokenName); err == nil {
+			fmt.Println(23423431245)
+			if indexOf(tokenRedis, cookie.Value) > -1 {
+				fmt.Println(cookie)
+				next.ServeHTTP(w, r)
+				return
+			}
 		}
-
-		next.ServeHTTP(w, r)
+		http.Error(w, "Not authorized", 401)
 	})
 }
 
@@ -255,11 +268,16 @@ func handleRegister(w http.ResponseWriter, r *http.Request) {
 			primitive.E{Key: "password", Value: account.Password},
 		},
 	)
+	jwt := generateJWT(account.Name)
+	r.AddCookie(&http.Cookie{
+		Name:  cookieTokenName,
+		Value: jwt,
+	})
 	json.NewEncoder(w).Encode(bson.M{
 		"errorCode": 0,
 		"data": bson.M{
 			"name":  "book.Name",
-			"token": "2345uilerghtjyukr",
+			"token": jwt,
 		},
 	})
 }
@@ -331,6 +349,7 @@ func generateJWT(user string) string {
 	if err != nil {
 		return ""
 	}
+	tokenRedis = append(tokenRedis, tokenString)
 	return tokenString
 }
 func handleJWT() {

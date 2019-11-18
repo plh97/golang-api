@@ -82,9 +82,7 @@ func tokenMiddleware(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		} else if cookie, err := r.Cookie(cookieTokenName); err == nil {
-			fmt.Println(23423431245)
 			if indexOf(tokenRedis, cookie.Value) > -1 {
-				fmt.Println(cookie)
 				next.ServeHTTP(w, r)
 				return
 			}
@@ -352,15 +350,9 @@ func generateJWT(user string) string {
 	tokenRedis = append(tokenRedis, tokenString)
 	return tokenString
 }
-func handleJWT() {
-	jwt := generateJWT("test name")
-	fmt.Println("jwt", jwt)
-}
 
 func main() {
 	handleMongodb()
 	handleRedis()
-	// handleJWT()
-	// 开始监听
 	handleRoute()
 }

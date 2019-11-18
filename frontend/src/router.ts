@@ -47,6 +47,9 @@ router.beforeEach((to, from, next) => {
   // 策略
   // to -> login
   if (getToken()) {
+    if (!store.getters.token) {
+      store.dispatch('user/getInfo')
+    }
     if (to.path === '/login' || to.path === '/register') {
       return next({ path: '/' });
     } else {

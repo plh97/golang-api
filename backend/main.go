@@ -3,16 +3,17 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"log"
-	"net/http"
-	"time"
-
-	// "github.com/go-redis/redis"
+	"fmt"
+	JWT "github.com/dgrijalva/jwt-go"
+	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
+	"net/http"
+	"time"
 )
 
 // Book is a book title
@@ -30,13 +31,17 @@ type Account struct {
 	Password string
 }
 
+// ObjectID id
+type ObjectID [12]byte
+
 var books []Book
 var booksCollection *mongo.Collection
 var accountsCollection *mongo.Collection
 var ctx context.Context
 
-// ObjectID id
-type ObjectID [12]byte
+const cookieTokenName = "Admin-Token"
+
+var mySigningKey = []byte(cookieTokenName)
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -48,13 +53,29 @@ func loggingMiddleware(next http.Handler) http.Handler {
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		w.Header().Set("Access-Control-Allow-Origin", r.Header["Origin"][0])
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, PATCH, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func tokenMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if cookie, err := r.Cookie(cookieTokenName); err == nil {
+			// here to check whether token is valid and expired
+			fmt.Println(111111111, cookie)
+			// value := make(map[string]string)
+			// if err = s2.Decode("cookie-name", cookie.Value, &value); err == nil {
+			// 	fmt.Fprintf(w, "The value of foo is %q", value["foo"])
+			// }
+		}
+
 		next.ServeHTTP(w, r)
 	})
 }
@@ -72,12 +93,6 @@ func handleMongodb() {
 	log.Println("Connected to MongoDB!")
 	booksCollection = client.Database("testing").Collection("books")
 	accountsCollection = client.Database("testing").Collection("accounts")
-}
-
-func main() {
-	handleMongodb()
-	handleRoute()
-	// handleRedis()
 }
 
 // 获取所有书
@@ -201,11 +216,17 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	jwt := generateJWT(account.Name)
+	r.AddCookie(&http.Cookie{
+		Name:  cookieTokenName,
+		Value: jwt,
+	})
+	// TODO: here to string it into redis
 	json.NewEncoder(w).Encode(bson.M{
 		"errorCode": 0,
 		"data": bson.M{
-			"name":  "book.Name",
-			"token": "2345uilerghtjyukr",
+			"name":  account.Name,
+			"token": jwt,
 		},
 	})
 }
@@ -255,7 +276,7 @@ func handleGetUserInfo(w http.ResponseWriter, r *http.Request) {
 
 func handleRoute() {
 	r := mux.NewRouter()
-	// r.HandleFunc("/api/userInfo", handleGetUserInfo).Methods(http.MethodOptions, http.MethodGet)
+	r.HandleFunc("/api/userInfo", handleGetUserInfo).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/api/register", handleRegister).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/login", handleLogin).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/book", createBook).Methods(http.MethodOptions, http.MethodPost)
@@ -264,36 +285,63 @@ func handleRoute() {
 	r.HandleFunc("/api/book", getBooks).Methods(http.MethodGet)
 	r.Use(corsMiddleware)
 	r.Use(loggingMiddleware)
+	r.Use(tokenMiddleware)
 	http.ListenAndServe(":8080", r)
 }
 
-// func handleRedis() {
-// 	client := redis.NewClient(&redis.Options{
-// 		Addr:     "redis:6379",
-// 		Password: "",
-// 		DB:       0,
-// 	})
+func handleRedis() {
+	client := redis.NewClient(&redis.Options{
+		Addr:     "redis:6379",
+		Password: "",
+		DB:       0,
+	})
 
-// 	pong, err1 := client.Ping().Result()
-// 	fmt.Println(pong, err1)
+	pong, err1 := client.Ping().Result()
+	fmt.Println(pong, err1)
 
-// 	err := client.Set("key", "value", 0).Err()
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	err := client.Set("key", "value", 0).Err()
+	if err != nil {
+		panic(err)
+	}
 
-// 	val, err := client.Get("key").Result()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	fmt.Println("key", val)
+	val, err := client.Get("key").Result()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("key", val)
 
-// 	val2, err := client.Get("key2").Result()
-// 	if err == redis.Nil {
-// 		fmt.Println("key2 does not exist")
-// 	} else if err != nil {
-// 		panic(err)
-// 	} else {
-// 		fmt.Println("key2", val2)
-// 	}
-// }
+	val2, err := client.Get("key2").Result()
+	if err == redis.Nil {
+		fmt.Println("key2 does not exist")
+	} else if err != nil {
+		panic(err)
+	} else {
+		fmt.Println("key2", val2)
+	}
+}
+
+// TODO: out put a string token and store it into redis
+func generateJWT(user string) string {
+	token := JWT.New(JWT.SigningMethodHS256)
+	claims := token.Claims.(JWT.MapClaims)
+	claims["authorized"] = true
+	claims["user"] = user
+	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
+	tokenString, err := token.SignedString(mySigningKey)
+	if err != nil {
+		return ""
+	}
+	return tokenString
+}
+func handleJWT() {
+	jwt := generateJWT("test name")
+	fmt.Println("jwt", jwt)
+}
+
+func main() {
+	handleMongodb()
+	handleRedis()
+	// handleJWT()
+	// 开始监听
+	handleRoute()
+}

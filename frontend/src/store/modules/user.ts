@@ -28,6 +28,11 @@ const mutations = {
 };
 
 const actions = {
+  getInfo(context: ActionContext<any, any>, form: LoginType) {
+    return new Promise(async (resolve, reject) => {
+        const res = await Account.userInfo(form)
+    })
+  },
   // get user info
   login(context: ActionContext<any, any>, form: LoginType) {
     return new Promise(async (resolve, reject) => {

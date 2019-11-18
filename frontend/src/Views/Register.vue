@@ -1,5 +1,5 @@
 <template lang="pug">
-  .Login {{name}}
+  .Login
     .title Register
     el-form(label-width="120px" :model="form")
       el-form-item(label="Name")
@@ -18,7 +18,6 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { mapGetters } from "vuex";
 import Component from "vue-class-component";
 import { Account } from "../dataStore";
 
@@ -28,18 +27,12 @@ type FormType = {
   repeatPassword: string;
 };
 
-@Component({
-  computed: {
-    ...mapGetters([
-      "name"
-    ])
-  }
-})
+@Component({})
 export default class Register extends Vue {
   public form: FormType = {
-    name: "admin",
-    password: "12345678",
-    repeatPassword: "12345678"
+    name: "",
+    password: "",
+    repeatPassword: ""
   };
   public async handleRegister(): Promise<void> {
     await this.$store.dispatch('user/register', {

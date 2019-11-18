@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from 'axios';
 import store from './store/index';
 import { Message } from 'element-ui';
+import { getToken } from './utils/auth';
 
 interface LoginType {
   name: string;
@@ -27,9 +28,13 @@ interface Book {
 }
 
 const axiosApi = axios.create({
-  baseURL: `//${document.domain}:8002`
+  baseURL: `//${document.domain}:8002`,
+  // headers: {
+  //   'Access-Control-Allow-Origin': '*',
+  //   token: getToken()
+  // },
 });
-
+axios.defaults.withCredentials = true
 // request interceptor
 axiosApi.interceptors.request.use(
   (config: AxiosRequestConfig) => {
@@ -117,6 +122,14 @@ export const Book = {
 };
 
 export const Account = {
+  userInfo(data: LoginType) {
+    return axiosApi.request<ResponseType, ResponseType>({
+      url: '/api/userInfo',
+      method: 'GET',
+      withCredentials: true,
+      data
+    });
+  },
   login(data: LoginType) {
     return axiosApi.request<ResponseType, ResponseType>({
       url: '/api/login',

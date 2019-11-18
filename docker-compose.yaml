@@ -1,7 +1,15 @@
 version: "3.7"
 
 services:
+  redis:
+    image: redis
+    restart: always
+    networks:
+      - back-tier
+
   mongodb:
+    logging:
+      driver: none
     image: mongo
     restart: always
     environment:

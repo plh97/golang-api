@@ -27,8 +27,8 @@ type LoginType = {
 @Component({})
 export default class Login extends Vue {
   public loginForm: LoginType = {
-    name: "admin",
-    password: "1234567"
+    name: "",
+    password: ""
   };
   public async handleLogin(): Promise<void> {
     await this.$store.dispatch("user/login", this.loginForm);

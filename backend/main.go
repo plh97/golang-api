@@ -274,18 +274,24 @@ func handleRegister(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(bson.M{
 		"errorCode": 0,
 		"data": bson.M{
-			"name":  "book.Name",
+			"name":  account.Name,
 			"token": jwt,
 		},
 	})
 }
 
 func handleGetUserInfo(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := r.Cookie(cookieTokenName);
+	claims := JWT.MapClaims{}
+	JWT.ParseWithClaims(cookie.Value,claims, func(token *JWT.Token) (interface{}, error) {
+		return []byte(cookieTokenName), nil
+	})
+	fmt.Println(claims["user"])
 	json.NewEncoder(w).Encode(bson.M{
 		"errorCode": 0,
 		"data": bson.M{
-			"name":  "book.Name",
-			"token": "2345uilerghtjyukr",
+			"name":  claims["user"],
+			"token": cookie.Value,
 		},
 	})
 }
@@ -305,6 +311,7 @@ func handleRoute() {
 	http.ListenAndServe(":8080", r)
 }
 
+// TODO: for redis login
 func handleRedis() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "redis:6379",
@@ -353,6 +360,6 @@ func generateJWT(user string) string {
 
 func main() {
 	handleMongodb()
-	handleRedis()
+	// handleRedis()
 	handleRoute()
 }

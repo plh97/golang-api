@@ -30,7 +30,19 @@ const mutations = {
 const actions = {
   getInfo(context: ActionContext<any, any>, form: LoginType) {
     return new Promise(async (resolve, reject) => {
+      try {
         const res = await Account.userInfo(form)
+        const { errorCode, data } = res
+        if (errorCode === 0) {
+          const { name, token } = data
+          context.commit('SET_NAME', name);
+          context.commit('SET_TOKEN', token);
+        } else {
+          reject(res)
+        }
+      } catch (error) {
+        reject(error)
+      }
     })
   },
   // get user info

@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Layout from './Components/Layout/index';
-import Home from './Views/Home';
+import Layout from './Components/Layout/index.vue';
+import Home from './Views/Home.vue';
 import Login from './Views/Login.vue';
-import Register from './Views/Register';
+import Register from './Views/Register.vue';
 import { getToken } from './utils/auth'; // get token from cookie
 import store from './store'; // get token from cookie
 

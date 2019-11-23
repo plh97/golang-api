@@ -82,9 +82,7 @@ func tokenMiddleware(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		} else if cookie, err := r.Cookie(cookieTokenName); err == nil {
-			fmt.Println(23423431245)
 			if indexOf(tokenRedis, cookie.Value) > -1 {
-				fmt.Println(cookie)
 				next.ServeHTTP(w, r)
 				return
 			}
@@ -276,18 +274,24 @@ func handleRegister(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(bson.M{
 		"errorCode": 0,
 		"data": bson.M{
-			"name":  "book.Name",
+			"name":  account.Name,
 			"token": jwt,
 		},
 	})
 }
 
 func handleGetUserInfo(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := r.Cookie(cookieTokenName);
+	claims := JWT.MapClaims{}
+	JWT.ParseWithClaims(cookie.Value,claims, func(token *JWT.Token) (interface{}, error) {
+		return []byte(cookieTokenName), nil
+	})
+	fmt.Println(claims["user"])
 	json.NewEncoder(w).Encode(bson.M{
 		"errorCode": 0,
 		"data": bson.M{
-			"name":  "book.Name",
-			"token": "2345uilerghtjyukr",
+			"name":  claims["user"],
+			"token": cookie.Value,
 		},
 	})
 }
@@ -307,6 +311,7 @@ func handleRoute() {
 	http.ListenAndServe(":8080", r)
 }
 
+// TODO: for redis login
 func handleRedis() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "redis:6379",
@@ -352,15 +357,9 @@ func generateJWT(user string) string {
 	tokenRedis = append(tokenRedis, tokenString)
 	return tokenString
 }
-func handleJWT() {
-	jwt := generateJWT("test name")
-	fmt.Println("jwt", jwt)
-}
 
 func main() {
 	handleMongodb()
-	handleRedis()
-	// handleJWT()
-	// 开始监听
+	// handleRedis()
 	handleRoute()
 }

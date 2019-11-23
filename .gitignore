@@ -1,6 +1,7 @@
 frontend/node_modules/
 frontend/.cache/
 frontend/dist
+frontend/dist
 mongodb/*
 nginx/*.log
 backend/tmp/*

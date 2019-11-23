@@ -4,6 +4,7 @@
   "description": "`docker-compose up`",
   "main": "index.js",
   "scripts": {
+    "webpack": "npx webpack --config webpack.config.js --watch",
     "dev": "parcel --hmr-port 1235 ./src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -37,13 +38,20 @@
   },
   "devDependencies": {
     "@vue/component-compiler-utils": "^3.0.0",
+    "node-sass": "^4.13.0",
     "prettier": "^1.19.1",
     "pug": "^2.0.4",
+    "pug-plain-loader": "^1.0.0",
     "sass": "^1.23.0",
+    "sass-loader": "^8.0.0",
+    "ts-loader": "^6.2.1",
     "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.6.4",
-    "vue-template-compiler": "^2.6.10"
+    "typescript": "^3.7.2",
+    "vue-loader": "^15.7.2",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   }
 }

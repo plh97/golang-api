@@ -93,7 +93,7 @@ func tokenMiddleware(next http.Handler) http.Handler {
 
 func handleMongodb() {
 	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://root:example@mongodb:27017"))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://root:ewqewq@mongodb:27017"))
 	if err != nil {
 		log.Fatal(err)
 	}

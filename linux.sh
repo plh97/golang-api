@@ -36,4 +36,5 @@ docker-compose --version &&
 rm containerd.io_1.2.6-3_amd64.deb &&
 rm docker-ce_19.03.3~3-0~ubuntu-disco_amd64.deb &&
 rm docker-ce-cli_19.03.3~3-0~ubuntu-disco_amd64.deb &&
-vim /etc/ssh/sshd_config
+apt-get install build-essential -y
+# vim /etc/ssh/sshd_config

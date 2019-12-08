@@ -1,5 +1,5 @@
 FROM golang
-
+# RUN apt-get install build-essential -y
 RUN mkdir -p /go/src/github.com/pengliheng/golang-api/backend
 
 COPY . /go/src/github.com/pengliheng/golang-api/backend
